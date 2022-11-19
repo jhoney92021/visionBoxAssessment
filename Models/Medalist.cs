@@ -3,7 +3,7 @@ using VisionBox.Models.Enums;
 namespace VisionBox.Models;
 
 public class Medalist
-{
+{ //start again
     public int MedalistId {get;set;}
     public string Name {get;set;}
     public Gender Gender {get;set;}
