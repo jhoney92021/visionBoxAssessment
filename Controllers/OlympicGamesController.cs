@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VisionBox.Models;
 using VisionBox.Models.Enums;
+using VisionBox.Controllers.Extensions;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace VisionBox.Controllers;
 
@@ -216,13 +219,22 @@ public class OlympicGamesController : ControllerBase
     {
         return OlympicGames;
     }
-    
+
 
     [HttpGet("GetMaleHalfpipeMedalists")]
     public IEnumerable<Medalist> GetMaleHalfpipeMedalists()
     {
         Console.WriteLine("fetching males");
-        return MaleMedalists;        
+        return MaleMedalists;
+    }
+
+    [HttpPost("AddMaleHalfpipeMedalist")]
+    public IEnumerable<Medalist> AddMaleHalfpipeMedalist(Medalist newMedalist)
+    {
+        Console.WriteLine("adding male medalist");
+        MaleMedalists.Add(newMedalist);
+
+        return MaleMedalists;
     }
 
     [HttpGet("GetFemaleHalfpipeMedalists")]
@@ -232,4 +244,36 @@ public class OlympicGamesController : ControllerBase
         return FemaleMedalists;
     }
 
+    [HttpPost($"ChangeMedalistName")]
+    public IEnumerable<Medalist> ChangeMedalistName([FromBody] int medalistId, Gender gender, string newName)
+    {
+        Console.WriteLine($"~~~ changing {medalistId} ~~~");
+        if (gender == Gender.Male)
+        {
+
+            return MaleMedalists.ChangeMaleMedalistName(medalistId, newName);
+
+        }
+        Console.WriteLine("name changed");
+        return MaleMedalists;
+    }
+
+    [HttpPost($"NewMedalist")]
+    public IEnumerable<Medalist> NewMedalist([FromBody] object newMedalistRequest)
+    {
+        var newMedalist = JsonSerializer.Deserialize<Medalist>(newMedalistRequest.ToString());
+        Console.WriteLine($"~~~ adding .NET {newMedalist.MedalistId} ~~~");
+        if (newMedalist.Gender == Gender.Male)
+        {
+            MaleMedalists.Add(newMedalist);
+            Console.WriteLine($"~~~ added {MaleMedalists.LastOrDefault().Name} ~~~");
+            return MaleMedalists;
+        }
+        else
+        {
+            FemaleMedalists.Add(newMedalist);
+            Console.WriteLine($"~~~ added {FemaleMedalists.LastOrDefault().Name} ~~~");
+            return FemaleMedalists;
+        }        
+    }
 }

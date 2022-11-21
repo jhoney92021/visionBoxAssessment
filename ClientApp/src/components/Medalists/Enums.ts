@@ -1,13 +1,8 @@
 
 export enum Gender
 {
-    Male = "Male",
-    Female = "Female"
-}
-
-export function NameOfGender(gender: Gender)
-{
-
+    Male,
+    Female
 }
 
 export enum Country
